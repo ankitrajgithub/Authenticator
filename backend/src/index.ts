@@ -7,6 +7,8 @@ import {PORT,APP_ORIGIN} from "./constants/env.js";
 import {errorHandler} from "./middleware/errorHandler.js";
 import {catchError} from "./utils/catchError.js"
 import { setServers } from "node:dns/promises";
+import { OK } from "./constants/http.js";
+import authRoutes from "./routes/auth.route.js";
 setServers(["1.1.1.1", "8.8.8.8"]);
 
 const app=express();
@@ -18,12 +20,13 @@ app.use(cors({
     credentials:true
 }));
 
-app.get("/",catchError(async(req,res,next)=>{
-    throw new Error("This is a test errpr");
-    res.json({
+app.get("/",catchError((req,res,next)=>{
+    res.status(OK).json({
         msg:"Hello"
     })
 }));
+
+app.use("/auth",authRoutes);
 
 app.use(errorHandler);
 
