@@ -1,10 +1,11 @@
-import {ErrorRequestHandler,Response} from "express";
+import {ErrorRequestHandler,Response,Request} from "express";
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../constants/http.js";
 import {z} from "zod";
 
-function handleZodError(res:Response,err:z.ZodError){
+function handleZodError(req:Request,res:Response,err:z.ZodError){
+    console.log(`Path ${req.path} - `+err);
     const errors=err.issues.map((error)=>({
-        path:error.path.join(","),
+        path:error.path,
         message:error.message
     }));
     return res.status(BAD_REQUEST).json({
@@ -13,10 +14,9 @@ function handleZodError(res:Response,err:z.ZodError){
     });
 }
 
-
 export const errorHandler:ErrorRequestHandler=(err,req,res,next)=>{
     if(err instanceof z.ZodError){
-        return handleZodError(res,err);
+        return handleZodError(req,res,err);
     }
 
     console.log(`Path ${req.path} - `+err);
