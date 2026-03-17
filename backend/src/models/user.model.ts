@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { hashValue } from "../utils/bcrypt.js";
+import { compareValue, hashValue } from "../utils/bcrypt.js";
 
 export interface UserDocument extends mongoose.Document{
     email:string,
@@ -16,10 +16,17 @@ const userSchema=new mongoose.Schema<UserDocument>({
     verified:{type:Boolean,required:true,default:false}
 },{timestamps:true});
 
-userSchema.pre("save",async function (next){
-    if(this.isModified("password")){
-        next();
+userSchema.pre("save",async function (){
+    if(!this.isModified("password")){
+        return;
     }
     this.password=await hashValue(this.password);
-    next();
-})
+    return;
+});
+
+userSchema.methods.comparePassword=async function (val:string){
+    return compareValue(val,this.password);
+}
+
+const userModel=mongoose.model<UserDocument>("User",userSchema);
+export default userModel;
