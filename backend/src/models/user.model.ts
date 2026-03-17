@@ -16,7 +16,7 @@ const userSchema=new mongoose.Schema<UserDocument>({
     verified:{type:Boolean,required:true,default:false}
 },{timestamps:true});
 
-userSchema.pre(event:"save",async function (next){
+userSchema.pre("save",async function (next){
     if(this.isModified("password")){
         next();
     }
