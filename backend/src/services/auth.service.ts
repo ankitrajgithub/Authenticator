@@ -1,4 +1,4 @@
-import { JWT_REFRESH_SECRET } from "../constants/env.js";
+import { JWT_REFRESH_SECRET, JWT_SECRET } from "../constants/env.js";
 import verificationCodeTypes from "../constants/verificationCodeTypes.js";
 import sessionModel from "../models/session.model.js";
 import userModel from "../models/user.model.js"
@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken";
 export type userData={
     email:string,
     password:string,
-    userAgent?:string
+    userAgent?:string | undefined
 }
 
 export const createAccount=async(data:userData)=>{
@@ -19,7 +19,7 @@ export const createAccount=async(data:userData)=>{
         email:data.email
     });
     if(existingUser){
-        return new Error("User already exists!!");
+        throw new Error("User already exists!!");
     }
 
     //create new user
@@ -61,5 +61,7 @@ export const createAccount=async(data:userData)=>{
     })
 
     //return user and token
-
+    return {
+        user, accessToken, refreshToken
+    }
 }
