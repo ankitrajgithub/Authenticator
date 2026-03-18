@@ -15,7 +15,7 @@ export type userData={
 export const createAccount=async(data:userData)=>{
 
     //Check if user exists
-    const existingUser=await userModel.find({
+    const existingUser=await userModel.findOne({
         email:data.email
     });
     if(existingUser){
@@ -33,7 +33,7 @@ export const createAccount=async(data:userData)=>{
         userId:user._id,
         type:verificationCodeTypes.EmailVerification,
         expiresAt:oneYearFromNow(),
-        // createdAt:Date.now()
+        createdAt:Date.now()
     })
 
     //Verification mail

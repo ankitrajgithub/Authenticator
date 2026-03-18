@@ -9,12 +9,13 @@ const registerSchema=z.object({
     password:z.string().min(6).max(255),
     confirmPassword:z.string().min(6).max(255),
     userAgent:z.string().optional()
-}).refine((data)=>{
-    data.password===data.confirmPassword,{
-        message:"Password do not match",
-        path:["confirmPassword"]
+}).refine(
+    (data) => data.password === data.confirmPassword,
+    {
+        message: "Password do not match",
+        path: ["confirmPassword"],
     }
-});
+);
 
 export const registerHandler=catchError(async (req,res)=>{
     //Validate request
